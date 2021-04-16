@@ -72,12 +72,15 @@ RSpec.describe 'Carnival' do
 
     it 'can recommend rides based on interets' do
       jeffco_fair = Carnival.new("Jefferson County Fair")
+
       ferris_wheel = Ride.new({name: 'Ferris Wheel', cost: 0})
       bumper_cars = Ride.new({name: 'Bumper Cars', cost: 10})
       scrambler = Ride.new({name: 'Scrambler', cost: 15})
+
       jeffco_fair.add_ride(ferris_wheel)
       jeffco_fair.add_ride(bumper_cars)
       jeffco_fair.add_ride(scrambler)
+
       bob = Attendee.new('Bob', 20)
       sally = Attendee.new('Sally', 20)
       johnny = Attendee.new("Johnny", 5)
@@ -97,8 +100,65 @@ RSpec.describe 'Carnival' do
         scrambler => []
       }
 
-
       expect(jeffco_fair.attendees_by_ride_interest).to eq(result)
     end
+
+    it 'lottery winner' do
+      jeffco_fair = Carnival.new("Jefferson County Fair")
+
+      ferris_wheel = Ride.new({name: 'Ferris Wheel', cost: 0})
+      bumper_cars = Ride.new({name: 'Bumper Cars', cost: 10})
+      scrambler = Ride.new({name: 'Scrambler', cost: 15})
+
+      jeffco_fair.add_ride(ferris_wheel)
+      jeffco_fair.add_ride(bumper_cars)
+      jeffco_fair.add_ride(scrambler)
+
+      bob = Attendee.new('Bob', 0)
+      sally = Attendee.new('Sally', 20)
+      johnny = Attendee.new("Johnny", 5)
+
+      jeffco_fair.admit(bob)
+      jeffco_fair.admit(sally)
+      jeffco_fair.admit(johnny)
+
+      bob.add_interest('Ferris Wheel')
+      bob.add_interest('Bumper Cars')
+      sally.add_interest('Bumper Cars')
+      johnny.add_interest('Bumper Cars')
+
+
+      expect(jeffco_fair.ticket_lottery_contestant(bumper_cars)).to eq([bob, johnny])
+    end
+
+    it 'lottery winner' do
+      jeffco_fair = Carnival.new("Jefferson County Fair")
+
+      ferris_wheel = Ride.new({name: 'Ferris Wheel', cost: 0})
+      bumper_cars = Ride.new({name: 'Bumper Cars', cost: 10})
+      scrambler = Ride.new({name: 'Scrambler', cost: 15})
+
+      jeffco_fair.add_ride(ferris_wheel)
+      jeffco_fair.add_ride(bumper_cars)
+      jeffco_fair.add_ride(scrambler)
+
+      bob = Attendee.new('Bob', 0)
+      sally = Attendee.new('Sally', 20)
+      johnny = Attendee.new("Johnny", 5)
+
+      jeffco_fair.admit(bob)
+      jeffco_fair.admit(sally)
+      jeffco_fair.admit(johnny)
+
+      bob.add_interest('Ferris Wheel')
+      bob.add_interest('Bumper Cars')
+      sally.add_interest('Bumper Cars')
+      johnny.add_interest('Bumper Cars')
+      allow(jeffco_fair).to receive(:draw_lottery_contestant) {"Johnney"}
+      expect(jeffco_fair.draw_lottery_winner(bumper_cars)) to eq(johnny)
+
+      expect(jeffco_fair.draw_lottery_winner(bumper_cars)).to eq(johnny)
+    end
+
   end
 end

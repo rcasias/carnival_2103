@@ -17,39 +17,45 @@ class Carnival
   end
 
   def recommend_rides(attendee)
-    ride_array = []
-    @rides.each do |ride|
-      attendee.interests.each do |interest|
-        if ride.name == interest
-          ride_array << ride
-        end
-      end
+    @rides.find_all do |ride|
+      attendee.interests.include?(ride.name)
     end
-    ride_array
   end
 
   def attendees_by_ride_interest
-    # @rides.each_with_object({}) do |ride, hash|
-    #   @attendees.each do |attendee|
-    #     recommend_rides(attendee).each do |ride|
-    #       if ride == hash[ride]
-    #         hash[ride] == attendee
-    #       end
-    #     end
-    #   end
-    # end
-    @rides.each_with_object({}) do |ride, hash|
-      @attendees.each do |attendee|
-        attendee.interests.each do |interest|
-          # require'pry';binding.pry
-          if attendee.interests == interest
-            hash[ride] << attendee.name
+    ride_hash = @rides.each_with_object({}) do |ride, hash|
+      hash[ride] =[]
+    end
+
+    @attendees.each do |attendee|
+      recommend_rides(attendee).each do |ride|
+          if attendee.interests.include?(ride.name)
+            ride_hash[ride] << attendee
+          else
+            ride_hash[ride] ==[attendee]
           end
         end
       end
-    end
+    ride_hash
   end
 
+  def ticket_lottery_contestant(ride)
+    tickets = []
+      attendees_by_ride_interest.each do |key, value|
+        if key.name == ride.name
+          value.each do |value|
+            if value.spending_money < key.cost
+              tickets << value
+            end
+          end
+        end
+    end.flatten
+    tickets.flatten
+  end
+  # require'pry';binding.pry
+  def draw_lottery_winner(ride)
+    conticket_lottery_contestant(ride)
+  end
 
 
 end
